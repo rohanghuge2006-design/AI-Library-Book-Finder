@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Search Result | AI Library</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<nav>
+
+    <div class="logo">
+        📚 AI Library
+    </div>
+
+    <div class="nav-right">
+
+        <span>🧠 BFS Book Finder</span>
+
+        <button onclick="toggleDarkMode()"
+                class="theme-btn"
+                id="themeBtn">
+            🌙
+        </button>
+
+    </div>
+
+</nav>
+
+
+<main>
+
+<section class="result-header">
+
+    <div>
+
+        <div class="small-label">
+            🔎 SEARCH RESULT
+        </div>
+
+        <h1>
+            Results for "{{ keyword }}"
+        </h1>
+
+        <p>
+            BFS automatically searched the library graph.
+        </p>
+
+    </div>
+
+    <div class="result-status
+        {% if found %}success{% else %}danger{% endif %}">
+
+        {% if found %}
+            ✅ Book Found
+        {% else %}
+            ❌ Book Not Found
+        {% endif %}
+
+    </div>
+
+</section>
+
+
+{% if found %}
+
+
+<!-- Statistics -->
+
+<section class="stats">
+
+    <div class="stat-card">
+
+        <span>🧠</span>
+
+        <strong>
+            {{ nodes_visited }}
+        </strong>
+
+        <small>
+            Nodes Visited
+        </small>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <span>🔗</span>
+
+        <strong>
+            {{ path_length }}
+        </strong>
+
+        <small>
+            Path Length
+        </small>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <span>⚡</span>
+
+        <strong>
+            {{ execution_time }} ms
+        </strong>
+
+        <small>
+            Search Time
+        </small>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <span>🚀</span>
+
+        <strong>
+            BFS
+        </strong>
+
+        <small>
+            Algorithm Used
+        </small>
+
+    </div>
+
+</section>
+
+
+<!-- Matching Books -->
+
+<section class="result-card">
+
+    <h2>
+        📚 Matching Books
+    </h2>
+
+    <div class="book-result-grid">
+
+        {% for book in results %}
+
+        <div class="result-book">
+
+            <div class="big-book">
+                📕
+            </div>
+
+            <div>
+
+                <h3>
+                    {{ book["title"] }}
+                </h3>
+
+                <p>
+                    👤 {{ book["author"] }}
+                </p>
+
+                <p>
+                    📂 {{ book["category"] }}
+                </p>
+
+                <div class="location">
+
+                    📍
+                    <strong>
+                        Shelf {{ book["shelf"] }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<!-- BFS Visualization -->
+
+<section class="result-card">
+
+    <div class="section-title">
+
+        <div>
+
+            <h2>
+                🧠 BFS Search Visualization
+            </h2>
+
+            <p>
+                Search path followed by the BFS algorithm
+            </p>
+
+        </div>
+
+        <span class="bfs-badge">
+            BFS
+        </span>
+
+    </div>
+
+
+    <div class="bfs-visual">
+
+        {% for node in path %}
+
+            <div class="bfs-node">
+
+                {% if loop.first %}
+
+                    <span class="node-icon">
+                        🏫
+                    </span>
+
+                {% elif loop.last %}
+
+                    <span class="node-icon">
+                        📕
+                    </span>
+
+                {% else %}
+
+                    <span class="node-icon">
+                        📂
+                    </span>
+
+                {% endif %}
+
+                <strong>
+                    {{ node }}
+                </strong>
+
+            </div>
+
+            {% if not loop.last %}
+
+                <div class="arrow">
+                    →
+                </div>
+
+            {% endif %}
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<!-- Visited Nodes -->
+
+<section class="result-card">
+
+    <h2>
+        👣 BFS Visited Nodes
+    </h2>
+
+    <p class="hint">
+        Nodes explored by BFS in order:
+    </p>
+
+    <div class="visited-list">
+
+        {% for node in visited %}
+
+        <div class="visited-node">
+
+            <span>
+                {{ loop.index }}
+            </span>
+
+            {{ node }}
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+{% else %}
+
+
+<section class="not-found">
+
+    <div class="not-found-icon">
+        🔍
+    </div>
+
+    <h2>
+        Book Not Found
+    </h2>
+
+    <p>
+        No book, author or category matched
+        "<strong>{{ keyword }}</strong>".
+    </p>
+
+    <p>
+        Try searching for <strong>Python</strong>,
+        <strong>AI</strong>, or
+        <strong>Computer</strong>.
+    </p>
+
+</section>
+
+
+{% endif %}
+
+
+<div class="back-area">
+
+    <a href="/" class="back-btn">
+        ← Search Another Book
+    </a>
+
+</div>
+
+
+<footer>
+
+    <strong>AI Library Book Finder</strong>
+
+    <span>
+        Python + Flask + SQLite + BFS
+    </span>
+
+</footer>
+
+</main>
+
+
+<script>
+
+function toggleDarkMode() {
+
+    document.body.classList.toggle("dark");
+
+    const button =
+        document.getElementById("themeBtn");
+
+    if (
+        document.body.classList.contains("dark")
+    ) {
+
+        button.innerHTML = "☀️";
+
+        localStorage.setItem(
+            "darkMode",
+            "true"
+        );
+
+    } else {
+
+        button.innerHTML = "🌙";
+
+        localStorage.setItem(
+            "darkMode",
+            "false"
+        );
+
+    }
+
+}
+
+
+if (
+    localStorage.getItem("darkMode")
+    === "true"
+) {
+
+    document.body.classList.add("dark");
+
+    document.getElementById(
+        "themeBtn"
+    ).innerHTML = "☀️";
+
+}
+
+</script>
+
+</body>
+
+</html>
